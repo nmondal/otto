@@ -13,3 +13,12 @@ console.log( "Some gave : " + y )
 y = b.nested.find( function (x) { return x > 1 } )
 console.log( "Find gave : " + y )
 
+console.log( "Keys of b are : " + b.entries() )
+y = b.entries().some( function (e) { return e[0] === 'x' } )
+console.log( "One key of b is 'nested' ? : " + y  )
+
+/*
+b.forEach( function ( k,v) {
+    console.log( "key : " + k + " value: " + v )
+} )
+*/

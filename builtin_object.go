@@ -275,6 +275,20 @@ func builtinObject_keys(call FunctionCall) Value {
 	panic(call.runtime.panicTypeError())
 }
 
+func builtinObject_pairs(call FunctionCall) Value {
+	object := call.thisObject()
+	pairs := []Value(nil)
+	object.enumerate(false, func(name string) bool {
+		pair := make([]Value, 2)
+		pair[0] = toValue_string(name)
+		pair[1] = object.get(name)
+		pairs = append(pairs,
+			Value{value: call.runtime.newArrayOf(pair), kind: valueObject})
+		return true
+	})
+	return toValue_object(call.runtime.newArrayOf(pairs))
+}
+
 func builtinObject_getOwnPropertyNames(call FunctionCall) Value {
 	if object, propertyNames := call.Argument(0)._object(), []Value(nil); nil != object {
 		object.enumerate(true, func(name string) bool {

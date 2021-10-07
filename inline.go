@@ -49,6 +49,30 @@ func _newContext(runtime *_runtime) {
 				call: builtinObject_valueOf,
 			},
 		}
+		pairs_function := &_object{
+			runtime:     runtime,
+			class:       classFunction,
+			objectClass: _classObject,
+			prototype:   runtime.global.FunctionPrototype,
+			extensible:  true,
+			property: map[string]_property{
+				propertyLength: _property{
+					mode: 0,
+					value: Value{
+						kind:  valueNumber,
+						value: 0,
+					},
+				},
+			},
+			propertyOrder: []string{
+				propertyLength,
+			},
+			value: _nativeFunctionObject{
+				name: "entries",
+				call: builtinObject_pairs,
+			},
+		}
+
 		toString_function := &_object{
 			runtime:     runtime,
 			class:       classFunction,
@@ -172,6 +196,14 @@ func _newContext(runtime *_runtime) {
 					value: valueOf_function,
 				},
 			},
+			"entries": _property{
+				mode: 0101,
+				value: Value{
+					kind:  valueObject,
+					value: pairs_function,
+				},
+			},
+
 			"toString": _property{
 				mode: 0101,
 				value: Value{
@@ -1172,7 +1204,7 @@ func _newContext(runtime *_runtime) {
 				propertyLength,
 			},
 			value: _nativeFunctionObject{
-				name: "indexOf",
+				name: "find",
 				call: builtinArray_findItem,
 			},
 		}
@@ -1571,6 +1603,7 @@ func _newContext(runtime *_runtime) {
 				"indexOf",
 				"lastIndexOf",
 				"every",
+				"find",
 				"some",
 				"forEach",
 				"map",
