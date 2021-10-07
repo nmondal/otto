@@ -499,6 +499,24 @@ func builtinArray_indexOf(call FunctionCall) Value {
 	return toValue_int(-1)
 }
 
+func builtinArray_findItem(call FunctionCall) Value {
+	thisObject := call.thisObject()
+	this := toValue_object(thisObject)
+	if iterator := call.Argument(0); iterator.isCallable() {
+		length := int64(toUint32(thisObject.get(propertyLength)))
+		callThis := call.Argument(1)
+		for index := int64(0); index < length; index++ {
+			if key := arrayIndexToString(index); thisObject.hasProperty(key) {
+				if value := thisObject.get(key); iterator.call(call.runtime, callThis, value, toValue_int64(index), this).bool() {
+					return value
+				}
+			}
+		}
+		return Value{}
+	}
+	panic(call.runtime.panicTypeError())
+}
+
 func builtinArray_lastIndexOf(call FunctionCall) Value {
 	thisObject, matchValue := call.thisObject(), call.Argument(0)
 	length := int64(toUint32(thisObject.get(propertyLength)))
@@ -547,21 +565,8 @@ func builtinArray_every(call FunctionCall) Value {
 }
 
 func builtinArray_some(call FunctionCall) Value {
-	thisObject := call.thisObject()
-	this := toValue_object(thisObject)
-	if iterator := call.Argument(0); iterator.isCallable() {
-		length := int64(toUint32(thisObject.get(propertyLength)))
-		callThis := call.Argument(1)
-		for index := int64(0); index < length; index++ {
-			if key := arrayIndexToString(index); thisObject.hasProperty(key) {
-				if value := thisObject.get(key); iterator.call(call.runtime, callThis, value, toValue_int64(index), this).bool() {
-					return trueValue
-				}
-			}
-		}
-		return falseValue
-	}
-	panic(call.runtime.panicTypeError())
+	value := builtinArray_findItem(call)
+	return toValue(!value.IsUndefined())
 }
 
 func builtinArray_forEach(call FunctionCall) Value {

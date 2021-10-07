@@ -1153,6 +1153,30 @@ func _newContext(runtime *_runtime) {
 				call: builtinArray_indexOf,
 			},
 		}
+		findItem_function := &_object{
+			runtime:     runtime,
+			class:       classFunction,
+			objectClass: _classObject,
+			prototype:   runtime.global.FunctionPrototype,
+			extensible:  true,
+			property: map[string]_property{
+				propertyLength: _property{
+					mode: 0,
+					value: Value{
+						kind:  valueNumber,
+						value: 1,
+					},
+				},
+			},
+			propertyOrder: []string{
+				propertyLength,
+			},
+			value: _nativeFunctionObject{
+				name: "indexOf",
+				call: builtinArray_findItem,
+			},
+		}
+
 		lastIndexOf_function := &_object{
 			runtime:     runtime,
 			class:       classFunction,
@@ -1464,6 +1488,13 @@ func _newContext(runtime *_runtime) {
 					value: Value{
 						kind:  valueObject,
 						value: indexOf_function,
+					},
+				},
+				"find": _property{
+					mode: 0101,
+					value: Value{
+						kind:  valueObject,
+						value: findItem_function,
 					},
 				},
 				"lastIndexOf": _property{
