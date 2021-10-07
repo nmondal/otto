@@ -137,8 +137,19 @@ func (self *_runtime) cmpl_evaluate_nodeAssignExpression(node *_nodeAssignExpres
 func (self *_runtime) cmpl_evaluate_nodeBinaryExpression(node *_nodeBinaryExpression) Value {
 
 	left := self.cmpl_evaluate_nodeExpression(node.left)
+	// this is where pains start... and ends.. :-)
+	if node.operator == token.EXISTENCE {
+		lV, e := left.tryResolve()
+		if e != nil || lV.IsUndefined() {
+			r := self.cmpl_evaluate_nodeExpression(node.right)
+			rV := r.resolve()
+			if rV.IsUndefined() {
+				panic(self.panicTypeError())
+			}
+			return rV
+		}
+	}
 	leftValue := left.resolve()
-
 	switch node.operator {
 	// Logical
 	case token.LOGICAL_AND:

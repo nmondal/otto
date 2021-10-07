@@ -1,6 +1,7 @@
 package otto
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"reflect"
@@ -484,6 +485,14 @@ func (value Value) resolve() Value {
 		return value.getValue()
 	}
 	return value
+}
+
+func (value Value) tryResolve() (Value, error) {
+	ok := value.value.(_reference)
+	if ok != nil && !ok.invalid() {
+		return ok.getValue(), nil
+	}
+	return Value{}, errors.New("could not resolve Reference")
 }
 
 var (

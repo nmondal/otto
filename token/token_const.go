@@ -54,8 +54,8 @@ const (
 	ASSIGN       // =
 	NOT          // !
 
-	BITWISE_NOT // ~
-
+	BITWISE_NOT      // ~
+	EXISTENCE        // ??
 	NOT_EQUAL        // !=
 	STRICT_NOT_EQUAL // !==
 	LESS_OR_EQUAL    // <=
@@ -156,6 +156,7 @@ var token2string = [...]string{
 	ASSIGN:                      "=",
 	NOT:                         "!",
 	BITWISE_NOT:                 "~",
+	EXISTENCE:                   "??",
 	NOT_EQUAL:                   "!=",
 	STRICT_NOT_EQUAL:            "!==",
 	LESS_OR_EQUAL:               "<=",

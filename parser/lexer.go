@@ -292,7 +292,8 @@ func (self *_parser) scan() (tkn token.Token, literal string, idx file.Idx) {
 			case '~':
 				tkn = token.BITWISE_NOT
 			case '?':
-				tkn = token.QUESTION_MARK
+				// this is how we resolve from ? -> ??
+				tkn = self.switch2(token.QUESTION_MARK, token.EXISTENCE)
 			case '"', '\'':
 				insertSemicolon = true
 				tkn = token.STRING
@@ -312,7 +313,7 @@ func (self *_parser) scan() (tkn token.Token, literal string, idx file.Idx) {
 }
 
 func (self *_parser) switch2(tkn0, tkn1 token.Token) token.Token {
-	if self.chr == '=' {
+	if self.chr == '=' || self.chr == '?' {
 		self.read()
 		return tkn1
 	}

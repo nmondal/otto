@@ -762,6 +762,20 @@ func (self *_parser) parseRelationalExpression() ast.Expression {
 			Right:    self.parseRelationalExpression(),
 		}
 		return exp
+
+	case token.EXISTENCE:
+		tkn := self.token
+		if self.mode&StoreComments != 0 {
+			self.comments.Unset()
+		}
+		self.next()
+
+		exp := &ast.BinaryExpression{
+			Operator: tkn,
+			Left:     left,
+			Right:    self.parseRelationalExpression(),
+		}
+		return exp
 	}
 
 	return left
