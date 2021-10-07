@@ -54,6 +54,19 @@ func (self *_runtime) evaluateModulo(left float64, right float64) Value {
 
 func (self *_runtime) calculateBinaryExpression(operator token.Token, left Value, right Value) Value {
 
+	if operator == token.EXISTENCE {
+
+		lV, e := left.tryResolve()
+		if e != nil || lV.IsUndefined() || lV.IsNull() {
+			rV := right.resolve()
+			if rV.IsUndefined() { // allow null
+				panic(self.panicTypeError())
+			}
+			return rV
+		}
+		return lV
+	}
+
 	leftValue := left.resolve()
 
 	switch operator {

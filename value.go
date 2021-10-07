@@ -488,11 +488,14 @@ func (value Value) resolve() Value {
 }
 
 func (value Value) tryResolve() (Value, error) {
-	ok := value.value.(_reference)
-	if ok != nil && !ok.invalid() {
-		return ok.getValue(), nil
+	if value.kind == valueReference {
+		ok := value.value.(_reference)
+		if ok != nil && !ok.invalid() {
+			return ok.getValue(), nil
+		}
+		return Value{}, errors.New("could not resolve Reference")
 	}
-	return Value{}, errors.New("could not resolve Reference")
+	return value.resolve(), nil
 }
 
 var (
